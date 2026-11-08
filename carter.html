@@ -175,7 +175,7 @@ input[type=range]{width:100%;accent-color:var(--moon)}
     </div>
     <div class="tmeta"><span id="tstep"></span><span class="tdots" id="tdots"></span></div>
     <div class="tbtns" id="tbornrow" hidden style="margin-bottom:8px;display:none"><button class="b main" id="tborn" style="width:100%">👶 Carter’s here! Tell Pip the big news</button></div>
-    <div class="tbtns"><button class="b" id="tback">← Back</button><button class="b" id="texit">Close tour</button><span class="sp"></span><button class="b" id="tspeak" aria-pressed="true">🔊 Voice on</button><button class="b main" id="tnext">Next →</button></div>
+    <div class="tbtns"><button class="b" id="tback">← Back</button><button class="b" id="texit">Close tour</button><span class="sp"></span><button class="b" id="tspeak" aria-pressed="false">🔇 Hear Pip</button><button class="b main" id="tnext">Next →</button></div>
   </div>
 </div>
 <button id="mus" class="musbtn" aria-pressed="true">♪ Music on</button>
@@ -407,12 +407,13 @@ $("#sky").onclick=()=>{$("#sky").style.display="none";cancelAnimationFrame(raf)}
 
 (async()=>{await openDB();try{born=!!(await get("born"))}catch(e){}
   try{toured=!!(await get("toured"))}catch(e){}
+  try{speakOn=!!(await get("voice"));const sb=$("#tspeak");if(sb){sb.textContent=speakOn?"🔊 Voice on":"🔇 Hear Pip";sb.setAttribute("aria-pressed",speakOn)}}catch(e){}
   try{const st=await get("settings");if(st)applySettings(st);}catch(e){}
   try{lines=await get("lines")||[]}catch(e){lines=[]}
   for(const l of lines){has[l.id]=!!(await get("v"+l.id))}
   render()})();
 // ---------- Pip the stork: a talking guided tour ----------
-let tourI=0,speakOn=true,spotEl=null;
+let tourI=0,speakOn=false,spotEl=null;
 const recCount=()=>lines.filter(l=>has[l.id]).length;
 const selText=id=>{const s=$(id);return s.options[s.selectedIndex].text};
 const OWNER_NAME="Carter";
@@ -469,18 +470,39 @@ let toured=false;
 let STEPS=PRE_STEPS;
 function buildSteps(){STEPS=born?POST_STEPS.slice():PRE_STEPS.slice();
   if(OWNER_NAME==="Carter") STEPS.splice(born?2:1,0,{t:"Load what they sent 📥",x:"On the Your voices tab there’s a card called “Voices from both of you.” When Nevaeh or Grayson sends a voices file from their phone, tap “Add voices I received” on THIS device and pick that file, just once. It loads everything at once — their lines, their recordings, even the sounds and timer they chose — so this crib player becomes exactly what they set up. Then all that’s left is the Play tab and Start.",tab:"lines",target:()=>$("#share")});}
+let PIP_VOICES=[];
+function loadVoices(){try{PIP_VOICES=speechSynthesis.getVoices()||[]}catch(e){}}
+if("speechSynthesis" in window){loadVoices();try{speechSynthesis.onvoiceschanged=loadVoices}catch(e){}}
+function pickSoftVoice(){
+  let vs=PIP_VOICES;if(!vs.length){loadVoices();vs=PIP_VOICES}
+  vs=vs.filter(v=>v.lang&&v.lang.toLowerCase().startsWith("en"));
+  if(!vs.length)return null;
+  const bad=/zarvox|bubbles|cellos|bells|organ|trinoid|bad news|good news|hysterical|deranged|boing|jester|superstar|albert|whisper/i;
+  const good=vs.filter(v=>!bad.test(v.name));
+  const pool=good.length?good:vs;
+  const want=["samantha","google us english","aria","jenny","karen","moira","tessa","fiona","zira","serena","kate"];
+  for(const w of want){const f=pool.find(v=>v.name.toLowerCase().includes(w));if(f)return f}
+  const nat=pool.find(v=>/enhanced|premium|natural|neural/i.test(v.name));if(nat)return nat;
+  return pool[0];
+}
+let pipChunks=0;
 function pipSay(text){
   const T=$("#tour");T.classList.remove("talking");
   if(!speakOn||!("speechSynthesis" in window))return;
   try{
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"").replace(/·/g,","));
-    u.rate=.98;u.pitch=1.12;
-    const vs=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().startsWith("en"));
-    const soft=vs.find(v=>/female|samantha|zira|aria|jenny|google us english/i.test(v.name))||vs[0];
-    if(soft)u.voice=soft;
-    u.onstart=()=>T.classList.add("talking");u.onend=u.onerror=()=>T.classList.remove("talking");
-    speechSynthesis.speak(u);
+    const clean=text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"").replace(/·/g,",").replace(/—/g,", ").replace(/\s+/g," ").trim();
+    const parts=(clean.match(/[^.!?…]+[.!?…]*\s*/g)||[clean]).map(s=>s.trim()).filter(Boolean);
+    const voice=pickSoftVoice();
+    pipChunks=parts.length;
+    parts.forEach((p,i)=>{
+      const u=new SpeechSynthesisUtterance(p);
+      u.rate=.9;u.pitch=.95;
+      if(voice)u.voice=voice;
+      if(i===0)u.onstart=()=>T.classList.add("talking");
+      u.onend=u.onerror=()=>{if(--pipChunks<=0)T.classList.remove("talking")};
+      speechSynthesis.speak(u);
+    });
   }catch(e){}
 }
 function setSpot(el){
@@ -561,8 +583,9 @@ $("#tnext").onclick=()=>{
 };
 $("#tspeak").onclick=e=>{
   speakOn=!speakOn;
-  e.currentTarget.textContent=speakOn?"🔊 Voice on":"🔇 Voice off";
+  e.currentTarget.textContent=speakOn?"🔊 Voice on":"🔇 Hear Pip";
   e.currentTarget.setAttribute("aria-pressed",speakOn);
+  put("voice",speakOn?1:0);
   if(speakOn)renderStep();else{try{speechSynthesis.cancel()}catch(x){}$("#tour").classList.remove("talking")}
 };
 if("speechSynthesis" in window){try{speechSynthesis.getVoices()}catch(e){}}
