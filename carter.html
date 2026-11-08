@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Carter’s Lullaby">
+<meta name="theme-color" content="#cfe7f8">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Carter’s Lullaby</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Figtree:wght@400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#cfe7f8;--panel:#eaf5fd;--ink:#173452;--mute:#3f6283;--line:#a9cbe4;--moon:#2f6fa8;--moonbg:#dcedfa;--accent:#2f6fa8;--accentink:#fff;--danger:#a23b5a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d3b5e;--panel:#264a73;--ink:#eaf4fd;--mute:#a9c6e2;--line:#386290;--moon:#bfe0fa;--moonbg:#2d5886;--accent:#bfe0fa;--accentink:#12304f;--danger:#e59ab3;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1d3b5e;--panel:#264a73;--ink:#eaf4fd;--mute:#a9c6e2;--line:#386290;--moon:#bfe0fa;--moonbg:#2d5886;--accent:#bfe0fa;--accentink:#12304f;--danger:#e59ab3;color-scheme:dark}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:400 17px/1.55 Figtree,system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:600;line-height:1.2;margin:0}
+header{padding:28px 20px 8px;max-width:720px;margin:0 auto}
+h1{font-size:34px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{flex:none;border-radius:14px}
+header p{margin:6px 0 0;color:var(--mute)}
+nav{display:flex;gap:6px;max-width:720px;margin:14px auto 0;padding:0 20px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+nav button{flex:1;padding:12px 8px;border:0;border-bottom:3px solid transparent;background:none;color:var(--mute);font:600 16px Figtree,sans-serif;cursor:pointer}
+nav button[aria-selected="true"]{color:var(--ink);border-color:var(--moon)}
+main{max-width:720px;margin:0 auto;padding:20px}
+section[hidden]{display:none}
+h2{font-size:24px;margin-bottom:6px}
+.sub{color:var(--mute);margin:0 0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.line{display:flex;flex-direction:column;gap:10px}
+.line textarea{width:100%;resize:vertical;min-height:56px;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button.b{padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:600 15px Figtree,sans-serif;cursor:pointer}
+button.b.main{background:var(--accent);color:var(--accentink);border-color:var(--accent)}
+button.b.rec{background:var(--danger);color:#fff;border-color:var(--danger)}
+button.b.del{color:var(--danger)}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--moon);outline-offset:2px}
+.tag{font-size:14px;color:var(--mute)}
+.tag.ok{color:var(--moon)}
+.themes h3{font-size:18px;margin:18px 0 8px}
+.chip{display:block;width:100%;text-align:left;margin:0 0 6px;padding:10px 12px;border-radius:10px;border:1px dashed var(--line);background:none;color:var(--ink);font:inherit;cursor:pointer}
+.chip:hover{background:var(--moonbg)}
+label{display:block;font-weight:600;margin:14px 0 6px}
+select,input[type=text]{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit}
+input[type=range]{width:100%;accent-color:var(--moon)}
+.val{float:right;font-weight:400;color:var(--mute)}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:90%;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:12px;z-index:30;display:none}
+#greet{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;padding:28px;text-align:center;background:#0a1236;color:#fff3cf}
+#greet canvas{position:absolute;inset:0;width:100%;height:100%}
+.gtxt{position:relative;margin-bottom:9vh}
+#greet h2{font-family:'Great Vibes','Brush Script MT',cursive;font-weight:400;font-size:clamp(40px,11.5vw,96px);white-space:nowrap;margin-bottom:12px;text-shadow:0 0 24px rgba(243,217,164,.45)}
+.gwel{font:600 15px Figtree,sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#cfd8ff;margin-bottom:4px}
+#greet p{max-width:420px;margin:0 auto 22px;color:#cfd8ff}
+#greet p.ghint{font-size:14px;opacity:.85;margin:14px auto 0}
+#greet button{padding:14px 34px;border-radius:999px;border:0;background:#f3d9a4;color:#14183a;font:600 17px Figtree,sans-serif;cursor:pointer}
+.musbtn{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));right:12px;z-index:45;padding:10px 14px;border-radius:999px;border:0;background:rgba(255,255,255,.88);color:#173452;font:600 14px Figtree,sans-serif;cursor:pointer}
+#sky{position:fixed;inset:0;z-index:20;background:#cfe7f8;display:none;cursor:pointer}
+#sky canvas{width:100%;height:100%;display:block}
+#sky span{position:absolute;left:0;right:0;bottom:calc(22px + env(safe-area-inset-bottom,0px));text-align:center;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4);font-size:14px}
+.note{font-size:14px;color:var(--mute);margin-top:14px}
+#skyback{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:14px;padding:12px 18px;border-radius:999px;border:0;background:rgba(255,255,255,.88);color:#173452;font:600 16px Figtree,sans-serif;cursor:pointer;z-index:2}
+.back{margin:0 0 12px}
+.guidebtn{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:12px;z-index:45;padding:10px 14px;border-radius:999px;border:0;background:rgba(255,255,255,.88);color:#173452;font:600 14px Figtree,sans-serif;cursor:pointer}
+#tour{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none}
+#tour[hidden]{display:none}
+.tcard{pointer-events:auto;width:100%;max-width:680px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 12px 40px rgba(10,25,60,.35)}
+.trow{display:flex;gap:12px;align-items:flex-start}
+.pipwrap{flex:none;width:74px;height:74px}
+.pipwrap svg{width:74px;height:74px}
+.pipwrap .eye{transform-origin:center;transform-box:fill-box;animation:blink 4.6s infinite}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+.pipwrap .wing{transform-origin:88% 30%;transform-box:fill-box}
+#tour.wave .wing{animation:wave 1s ease-in-out 2}
+@keyframes wave{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-24deg)}}
+.pipwrap .mouth{transform-origin:center;transform-box:fill-box}
+#tour.talking .mouth{animation:talk .28s ease-in-out infinite alternate}
+@keyframes talk{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
+.tbub{flex:1;min-width:0}
+.tbub h3{font-size:20px;margin:2px 0 4px}
+.tbub p{margin:0;color:var(--ink)}
+.tbub .stat{margin-top:8px;font-weight:600;color:var(--moon)}
+.tmeta{display:flex;align-items:center;justify-content:space-between;margin:12px 2px 8px;color:var(--mute);font-size:14px}
+.tdots{display:flex;gap:5px}
+.tdots i{width:8px;height:8px;border-radius:50%;background:var(--line);display:block}
+.tdots i.on{background:var(--moon)}
+.tbtns{display:flex;flex-wrap:wrap;gap:8px}
+.tbtns .sp{flex:1}
+.spot{animation:spotpulse 1.1s ease-in-out infinite;border-radius:12px}
+@keyframes spotpulse{0%,100%{box-shadow:0 0 0 3px rgba(47,111,168,.0),0 0 0 0 rgba(47,111,168,.0)}50%{box-shadow:0 0 0 3px rgba(47,111,168,.85),0 0 0 8px rgba(47,111,168,.18)}}
+</style>
+</head>
+<body>
+<div id="greet" role="dialog" aria-label="Welcome">
+  <canvas id="gc" aria-hidden="true"></canvas>
+  <div class="gtxt">
+    <div class="gwel">Welcome to</div>
+    <h2>Carter’s Lullaby</h2>
+    <p>A gift for Nevaeh, Grayson, and Carter, made with all our love. From Jimmy and Tara.</p>
+    <button id="enter">Open</button>
+    <p class="ghint" id="ghint">Tap anywhere to start the soft lullaby music</p>
+  </div>
+</div>
+
+<header>
+  <div class="brand"><svg class="logo" viewBox="0 0 64 64" width="54" height="54" role="img" aria-label="Carter’s Lullaby logo"><rect width="64" height="64" rx="15" fill="#7bbcec"/><path d="M18 9A8 8 0 1 0 18 23A9 9 0 0 1 18 9Z" fill="#fff6dc"/><g fill="#fff"><ellipse cx="22" cy="45" rx="6.5" ry="5" transform="rotate(-20 22 45)"/><ellipse cx="42" cy="40" rx="6.5" ry="5" transform="rotate(-20 42 40)"/><rect x="26.5" y="17" width="3.2" height="28"/><rect x="46.5" y="12" width="3.2" height="28"/><path d="M26.5 17 L49.7 12 L49.7 19 L26.5 24Z"/></g></svg><h1>Carter’s Lullaby</h1></div>
+  <p>Your voices, your words, your music, for every night and morning.</p>
+</header>
+<nav role="tablist">
+  <button role="tab" aria-selected="true" data-t="lines">Your voices</button>
+  <button role="tab" aria-selected="false" data-t="play">Play</button>
+</nav>
+
+<main>
+<section id="lines">
+  <button class="b back" id="backwelcome">← Back to welcome</button>
+  <h2>Your voices</h2>
+  <p class="sub">Pick or write the words, then record them in your own voice. Edit any line to say it your way.</p>
+  <div id="mine"></div>
+  <div class="card">
+    <label for="custom" style="margin-top:0">Write your own line</label>
+    <div class="row"><input type="text" id="custom" placeholder="Carter, we are so glad you are here"><button class="b main" id="addc">Add line</button></div>
+  </div>
+  <div class="card" id="share">
+    <label style="margin-top:0">💌 Voices from both of you</label>
+    <p class="small">Record on your own phone whenever you like — even from bed at 2 a.m. Tap <b>Send my voices</b> and share the little file it makes to the other phone (text it, AirDrop it, anything). On the phone that plays by Carter’s crib, tap <b>Add voices I received</b> and pick that file, just once — from then on, Carter hears Mommy <i>and</i> Daddy all night. The same file also loads <b>Carter’s own crib player</b> — their words, voices, sounds and settings, all of it.</p>
+    <div class="row"><button class="b main" id="exp">📤 Send my voices</button><button class="b" id="imp">📥 Add voices I received</button></div>
+    <input type="file" id="impf" accept=".json,application/json" hidden>
+  </div>
+  <div class="themes" id="lib"></div>
+</section>
+
+<section id="play" hidden>
+  <button class="b back" id="backlines">← Back to your voices</button>
+  <h2>Play</h2>
+  <p class="sub">Choose the sound, the volume, and how long it plays. Recorded lines repeat softly with quiet pauses between them.</p>
+  <div class="card">
+    <label for="mode" style="margin-top:0">Mode</label>
+    <select id="mode"><option value="night">Night: steady and calm</option><option value="nap">Nap: shorter and light</option><option value="wake">Wake-up: slowly brightens</option></select>
+    <label for="snd">Background sound</label>
+    <select id="snd"><option value="pad">Soft lullaby tones</option><option value="heart">Heartbeat and low whoosh</option><option value="noise">Gentle rain-like hush</option><option value="box">Music box lullaby</option><option value="none">Voices only</option></select>
+    <label for="vol">Sound volume <span class="val" id="vv">25%</span></label>
+    <input type="range" id="vol" min="0" max="60" value="25">
+    <label for="vov">Voices volume <span class="val" id="vo">35%</span></label>
+    <input type="range" id="vov" min="0" max="60" value="35">
+    <label for="gap">Pause between lines</label>
+    <select id="gap"><option value="8">8 seconds</option><option value="20" selected>20 seconds</option><option value="45">45 seconds</option><option value="90">90 seconds</option></select>
+    <label for="tm">Stop after</label>
+    <select id="tm"><option value="30">30 minutes</option><option value="60">1 hour</option><option value="180">3 hours</option><option value="480" selected>All night (8 hours)</option></select>
+    <label for="wp">Wallpaper</label>
+    <select id="wp"><option value="auto">Match the weather outside</option><option value="stars">Stars and moon</option><option value="sunny">Sunny</option><option value="partly">Partly cloudy</option><option value="cloudy">Cloudy</option><option value="rain">Rain</option><option value="storm">Soft storm</option><option value="snow">Snow</option><option value="fog">Fog</option><option value="wind">Windy clouds</option></select>
+    <p class="tag">Matching the live weather works once the app has its own web address. In this preview, choose the weather by hand.</p>
+    <label for="dim">Screen brightness</label>
+    <select id="dim"><option value="0">Normal</option><option value="0.3" selected>Dimmer</option><option value="0.55">Dimmest</option></select>
+    <label style="display:flex;gap:10px;align-items:center;font-weight:500"><input type="checkbox" id="vis"> Show the wallpaper while playing</label>
+    <div class="row" style="margin-top:18px"><button class="b main" id="go">Start</button><button class="b" id="stop" hidden>Stop</button><button class="b" id="sky-open">Preview wallpaper</button></div>
+    <p class="tag" id="st"></p>
+  </div>
+  <p class="note">Volume stops at a safe level on purpose. Place the speaker across the room, not next to the crib.</p>
+</section>
+</main>
+<div id="sky"><canvas></canvas><button id="skyback" aria-label="Back">← Back</button><span>Tap anywhere to go back</span></div>
+<button id="guide" class="guidebtn" aria-label="Open the guided tour with Pip the stork">🪶 Pip’s tour</button>
+<div id="tour" hidden role="dialog" aria-label="Guided tour with Pip the stork">
+  <div class="tcard">
+    <div class="trow">
+      <div class="pipwrap" aria-hidden="true"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="80" rx="30" ry="19" fill="#f7f9ff" stroke="#d7e3f2"/><path class="wing" d="M70 62 q22 2 19 20 q-13 5 -22 -4 q-5 -9 3 -16" fill="#e3ebfa" stroke="#c9d8ee"/><circle cx="50" cy="38" r="21" fill="#ffffff" stroke="#d7e3f2"/><path d="M30 33 a21 21 0 0 1 40 0 z" fill="#9fd0f0"/><g class="eye"><circle cx="42" cy="39" r="3.4" fill="#1b2142"/><circle cx="43.2" cy="37.8" r="1.1" fill="#fff"/></g><g class="eye"><circle cx="58" cy="39" r="3.4" fill="#1b2142"/><circle cx="59.2" cy="37.8" r="1.1" fill="#fff"/></g><circle cx="34" cy="47" r="3.2" fill="rgba(255,150,150,.55)"/><circle cx="66" cy="47" r="3.2" fill="rgba(255,150,150,.55)"/><path d="M43 45 L57 45 L50 60 z" fill="#f4a259"/><g class="mouth"><path d="M46 51 L54 51 L50 62 z" fill="#e8806a"/></g></svg></div>
+      <div class="tbub"><h3 id="tt"></h3><p id="tx"></p><p class="stat" id="tstat"></p></div>
+    </div>
+    <div class="tmeta"><span id="tstep"></span><span class="tdots" id="tdots"></span></div>
+    <div class="tbtns" id="tbornrow" hidden style="margin-bottom:8px;display:none"><button class="b main" id="tborn" style="width:100%">👶 Carter’s here! Tell Pip the big news</button></div>
+    <div class="tbtns"><button class="b" id="tback">← Back</button><button class="b" id="texit">Close tour</button><span class="sp"></span><button class="b" id="tspeak" aria-pressed="true">🔊 Voice on</button><button class="b main" id="tnext">Next →</button></div>
+  </div>
+</div>
+<button id="mus" class="musbtn" aria-pressed="true">♪ Music on</button>
+<div id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const LIB={
+"Love and belonging":["You are so loved, before you even arrived.","You belong here, and you are home.","Mommy and Daddy love you more than words."],
+"Strength and confidence":["You are capable and brave.","You can do hard things, one small step at a time.","Your voice matters."],
+"Kindness and heart":["You have a big, kind heart.","You make the people around you feel loved."],
+"Wonder and curiosity":["The world is waiting for you, and it is beautiful.","Every day is full of good things to discover."],
+"Blessing and faith":["You are a blessing, and you are watched over.","May you sleep in peace and wake in joy."],
+"Family":["Your whole family can’t wait to hold you.","Good morning, Carter. Today is going to be a good day."]
+};
+let db=null;const mem={};
+function openDB(){return new Promise(r=>{try{const q=indexedDB.open("cl",1);q.onupgradeneeded=()=>q.result.createObjectStore("a");q.onsuccess=()=>{db=q.result;r()};q.onerror=()=>r()}catch(e){r()}})}
+function put(k,v){mem[k]=v;return new Promise(r=>{if(!db)return r();try{const t=db.transaction("a","readwrite");t.objectStore("a").put(v,k);t.oncomplete=r;t.onerror=r}catch(e){r()}})}
+function get(k){return new Promise(r=>{if(mem[k])return r(mem[k]);if(!db)return r(null);try{const q=db.transaction("a").objectStore("a").get(k);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}catch(e){r(null)}})}
+function del(k){delete mem[k];return new Promise(r=>{if(!db)return r();try{const t=db.transaction("a","readwrite");t.objectStore("a").delete(k);t.oncomplete=r;t.onerror=r}catch(e){r()}})}
+let lines=[],has={},cur=null;
+const toast=m=>{const t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display="none",4500)};
+const save=()=>put("lines",lines);
+function addLine(text){lines.push({id:Date.now()+""+Math.floor(Math.random()*999),text});save();render()}
+function render(){
+  const m=$("#mine");m.innerHTML="";
+  if(!lines.length){m.innerHTML='<div class="card tag">No lines yet. Tap a line below, or write your own, then record it.</div>'}
+  lines.forEach(l=>{
+    const d=document.createElement("div");d.className="card line";
+    const recording=cur&&cur.lid===l.id;
+    d.innerHTML='<textarea aria-label="Line text"></textarea><div class="row"></div>';
+    const ta=d.querySelector("textarea");ta.value=l.text;ta.oninput=()=>{l.text=ta.value;save()};
+    const r=d.querySelector(".row");
+    const rb=btn(recording?"Stop recording":(has[l.id]?"Re-record":"Record"),"b"+(recording?" rec":" main"),()=>rec(l.id));
+    r.append(rb);
+    if(has[l.id]){r.append(btn("Listen","b",()=>listen(l.id)));const t=document.createElement("span");t.className="tag ok";t.textContent="Recorded";r.append(t)}
+    r.append(btn("Remove","b del",async()=>{await del("v"+l.id);delete has[l.id];lines=lines.filter(x=>x.id!==l.id);save();render()}));
+    m.append(d)});
+  const lib=$("#lib");lib.innerHTML="";
+  for(const th in LIB){const h=document.createElement("h3");h.textContent=th;lib.append(h);
+    LIB[th].forEach(t=>{const c=document.createElement("button");c.className="chip";c.textContent=t;c.onclick=()=>{addLine(t);toast("Added to your voices")};lib.append(c)})}
+}
+function btn(t,c,f){const b=document.createElement("button");b.className=c.startsWith("b")?"b"+c.slice(1):c;b.className="b "+c.replace(/^b\s?/,"");b.textContent=t;b.onclick=f;return b}
+async function rec(id){
+  if(cur){cur.stop();return}
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({audio:true});
+    const mr=new MediaRecorder(s),ch=[];
+    mr.ondataavailable=e=>ch.push(e.data);
+    mr.onstop=async()=>{s.getTracks().forEach(t=>t.stop());const b=new Blob(ch,{type:mr.mimeType||"audio/webm"});await put("v"+id,b);has[id]=true;cur=null;render()};
+    mr.lid=id;cur=mr;mr.start();render()
+  }catch(e){cur=null;toast("The microphone isn’t available here. Open this page in your browser and allow the microphone.")}
+}
+async function listen(id){const b=await get("v"+id);if(!b)return;const a=new Audio(URL.createObjectURL(b));a.volume=.6;a.play()}
+$("#addc").onclick=()=>{const v=$("#custom").value.trim();if(v){addLine(v);$("#custom").value=""}};
+function show(t,push){document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x.dataset.t===t));$("#lines").hidden=t!=="lines";$("#play").hidden=t!=="play";window.scrollTo(0,0);if(push){try{location.hash=t}catch(e){}}}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.t,true));
+$("#backlines").onclick=()=>show("lines",true);
+$("#backwelcome").onclick=()=>{$("#greet").style.display="flex";skyScene()};
+addEventListener("hashchange",()=>{const t=location.hash.slice(1);if(t==="lines"||t==="play")show(t,false)});
+addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#sky").style.display==="block")$("#sky").click()});
+$("#vol").oninput=e=>$("#vv").textContent=e.target.value+"%";
+$("#vov").oninput=e=>$("#vo").textContent=e.target.value+"%";
+let mctx=null,mg=null,mstop=null,musicOn=true,graf=0;
+const openApp=()=>{const g=$('#greet');if(g.style.display==='none')return;g.style.display='none';cancelAnimationFrame(graf);if(!toured){setTimeout(()=>{try{openTour()}catch(e){}},650)}else if(!lines.length)setTimeout(()=>toast("New here? Tap Pip’s tour at the bottom left — Pip the stork will set everything up with you, step by step."),700);try{if(OWNER_NAME==="Carter")show("play")}catch(e){}};
+$('#enter').addEventListener('pointerdown',e=>{e.preventDefault();openApp()});
+$('#enter').onclick=openApp;
+// ---------- lullaby music box ----------
+function lullaby(c,dest){
+  const M=[[[493.88,2],[587.33,1],[493.88,1]],[[659.25,2],[587.33,1],[493.88,1]],[[587.33,2],[493.88,1],[440,1]],[[392,4]],[[493.88,2],[587.33,1],[659.25,1]],[[783.99,2],[659.25,1],[587.33,1]],[[587.33,1],[493.88,1],[440,1],[392,1]],[[440,2],[392,2]]];
+  const B=[[196,293.66,246.94,293.66],[164.81,246.94,196,246.94],[196,293.66,246.94,293.66],[146.83,220,185,220],[196,293.66,246.94,293.66],[164.81,246.94,196,246.94],[196,293.66,246.94,293.66],[146.83,220,196,246.94]];
+  const beat=.85;let bar=0,t=c.currentTime+.3,alive=true,h;
+  const note=(f,at,len,g)=>{const o=c.createOscillator(),o2=c.createOscillator(),e=c.createGain(),e2=c.createGain();o.frequency.value=f;o2.frequency.value=f*2.76;e2.gain.value=.12;e.gain.setValueAtTime(0,at);e.gain.linearRampToValueAtTime(g,at+.008);e.gain.exponentialRampToValueAtTime(.0005,at+len);o.connect(e);o2.connect(e2).connect(e);e.connect(dest);o.start(at);o2.start(at);o.stop(at+len+.1);o2.stop(at+len+.1)};
+  const tick=()=>{if(!alive)return;while(t<c.currentTime+3){let b=t;M[bar%8].forEach(([f,d])=>{note(f,b,d*beat*1.6+.4,.2);b+=d*beat});B[bar%8].forEach((f,i)=>note(f,t+i*beat,1.4,.1));t+=4*beat;bar++}h=setTimeout(tick,500)};
+  tick();return()=>{alive=false;clearTimeout(h)}
+}
+function startMusic(){
+  if(!musicOn||mstop)return;
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  try{mctx=mctx||new AC();mctx.resume()}catch(e){return}
+  mg=mctx.createGain();mg.gain.setValueAtTime(.0001,mctx.currentTime);mg.gain.linearRampToValueAtTime(.5,mctx.currentTime+4);mg.connect(mctx.destination);
+  mstop=lullaby(mctx,mg);
+  const h=$('#ghint');if(h)h.style.visibility='hidden'
+}
+function stopMusic(){
+  if(mstop){mstop();mstop=null}
+  if(mg){const g=mg,c=mctx;try{g.gain.cancelScheduledValues(c.currentTime);g.gain.setValueAtTime(g.gain.value,c.currentTime);g.gain.linearRampToValueAtTime(.0001,c.currentTime+1.2)}catch(e){}setTimeout(()=>{try{g.disconnect()}catch(e){}},1500);mg=null}
+}
+document.addEventListener('pointerdown',()=>{if(musicOn&&!mstop&&!run)startMusic()});
+$('#mus').onclick=()=>{musicOn=!musicOn;$('#mus').textContent=musicOn?'♪ Music on':'♪ Music off';$('#mus').setAttribute('aria-pressed',musicOn);musicOn?startMusic():stopMusic()};
+// ---------- welcome night sky with the stork ----------
+function wing(g,fl,a,col){
+  g.save();g.globalAlpha=a;const up=-45*fl+8;
+  g.fillStyle=col;g.beginPath();g.moveTo(14,-8);g.quadraticCurveTo(-6,up*.9,-52,up-4);g.quadraticCurveTo(-34,up*.35,-34,-4);g.closePath();g.fill();
+  g.fillStyle='#2b3358';g.beginPath();g.moveTo(-40,up*.7-3);g.lineTo(-52,up-4);g.quadraticCurveTo(-38,up*.4,-34,-2);g.closePath();g.fill();
+  g.restore()
+}
+function bundle(g){
+  g.fillStyle='#bfe3fb';g.strokeStyle='#fff';g.lineWidth=1.5;
+  g.beginPath();g.moveTo(-5,0);g.lineTo(0,10);g.lineTo(5,0);g.closePath();g.fill();
+  g.beginPath();g.moveTo(0,8);g.bezierCurveTo(-26,16,-24,52,0,60);g.bezierCurveTo(24,52,26,16,0,8);g.closePath();g.fill();g.stroke();
+  g.strokeStyle='rgba(255,255,255,.85)';g.beginPath();g.moveTo(-14,42);g.quadraticCurveTo(0,50,14,42);g.stroke();
+  g.fillStyle='#ffd9c7';g.beginPath();g.arc(0,28,10,0,6.28);g.fill();
+  g.fillStyle='#9fd0f0';g.beginPath();g.arc(0,22,10,3.4,6.0);g.fill();
+  g.fillStyle='rgba(255,150,150,.45)';g.beginPath();g.arc(-6,31,2.2,0,6.28);g.arc(6,31,2.2,0,6.28);g.fill();
+  g.strokeStyle='#6b4a46';g.lineWidth=1.3;
+  g.beginPath();g.arc(-3.6,28,1.7,.2,2.9);g.stroke();g.beginPath();g.arc(3.6,28,1.7,.2,2.9);g.stroke();g.beginPath();g.arc(0,31.5,2.6,.3,2.8);g.stroke()
+}
+function stork(g,x,y,s,t){
+  const fl=Math.sin(t/260),sway=Math.sin(t/700)*.16;
+  g.save();g.translate(x,y);g.scale(s,s);
+  g.strokeStyle='#e8806a';g.lineWidth=3;g.lineCap='round';
+  g.beginPath();g.moveTo(-40,4);g.lineTo(-112,12+fl*3);g.moveTo(-38,7);g.lineTo(-108,20+fl*3);g.stroke();
+  wing(g,-fl,.6,'#cdd6f0');
+  g.fillStyle='#f7f9ff';g.beginPath();g.ellipse(0,0,50,16,-.05,0,6.28);g.fill();
+  g.fillStyle='#2b3358';g.beginPath();g.moveTo(-46,-4);g.lineTo(-72,-8);g.lineTo(-70,6);g.lineTo(-46,6);g.closePath();g.fill();
+  g.strokeStyle='#f7f9ff';g.lineWidth=8;g.beginPath();g.moveTo(40,-6);g.quadraticCurveTo(66,-12,76,-22);g.stroke();
+  g.fillStyle='#f7f9ff';g.beginPath();g.arc(80,-24,8,0,6.28);g.fill();
+  g.fillStyle='#f4a259';g.beginPath();g.moveTo(86,-28);g.lineTo(86,-20);g.lineTo(136,-8);g.closePath();g.fill();
+  g.fillStyle='#1b2142';g.beginPath();g.arc(82,-26,1.8,0,6.28);g.fill();
+  wing(g,fl,1,'#ffffff');
+  g.save();g.translate(130,-9);g.rotate(sway);bundle(g);g.restore();
+  g.restore()
+}
+function skyScene(){
+  const w=$('#greet'),c=$('#gc'),g=c.getContext('2d'),dpr=Math.min(2,window.devicePixelRatio||1);let W=1,H=1;
+  const fit=()=>{W=w.clientWidth;H=w.clientHeight;c.width=W*dpr;c.height=H*dpr;g.setTransform(dpr,0,0,dpr,0,0)};fit();addEventListener('resize',fit);
+  const st=Array.from({length:110},()=>({x:Math.random(),y:Math.random()*.8,r:Math.random()*1.5+.4,p:Math.random()*6.28}));
+  (function f(t){
+    if(w.style.display==='none')return;
+    const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#0a1236');gr.addColorStop(.6,'#1b2c6b');gr.addColorStop(1,'#3b4f94');g.fillStyle=gr;g.fillRect(0,0,W,H);
+    st.forEach(s=>{g.fillStyle='rgba(225,232,255,'+(.35+.35*Math.sin(t/1400+s.p))+')';g.beginPath();g.arc(s.x*W,s.y*H,s.r,0,6.28);g.fill()});
+    const mr=Math.min(W,H)*.07+16,mx=W*.8,my=H*.17,mgl=g.createRadialGradient(mx,my,mr*.8,mx,my,mr*3.2);mgl.addColorStop(0,'rgba(255,240,200,.35)');mgl.addColorStop(1,'rgba(255,240,200,0)');g.fillStyle=mgl;g.beginPath();g.arc(mx,my,mr*3.2,0,6.28);g.fill();
+    g.fillStyle='#fff3cf';g.beginPath();g.arc(mx,my,mr,0,6.28);g.fill();
+    g.fillStyle='rgba(222,202,150,.45)';[[-.3,-.2,.18],[.25,.15,.22],[-.05,.4,.12]].forEach(o=>{g.beginPath();g.arc(mx+o[0]*mr,my+o[1]*mr,o[2]*mr,0,6.28);g.fill()});
+    g.fillStyle='rgba(190,205,255,.10)';[[.2,.9,.5],[.7,.95,.55],[.45,1.02,.6]].forEach((o,i)=>{g.beginPath();g.ellipse(((o[0]*W+t/40*(i+1)*.3)%(W+300))-150,o[1]*H,o[2]*W*.5,40,0,0,6.28);g.fill()});
+    const s=Math.max(.8,Math.min(1.3,W/700));
+    stork(g,((t/1000*Math.max(70,W/8)+W*.5)%(W+560))-280,H*.26+Math.sin(t/1100)*16,s,t);
+    graf=requestAnimationFrame(f)
+  })(0)
+}
+skyScene();
+
+// ---------- sound engine ----------
+let ctx,amb,voi,run=false,nodes=[],timers=[],wl=null;
+const wait=ms=>new Promise(r=>timers.push(setTimeout(r,ms)));
+function brown(){const n=ctx.sampleRate*4,b=ctx.createBuffer(1,n,ctx.sampleRate),d=b.getChannelData(0);let l=0;for(let i=0;i<n;i++){const w=Math.random()*2-1;l=(l+.02*w)/1.02;d[i]=l*3.5}return b}
+function startSound(k,mode){
+  if(k==="none")return;
+  if(k==="box"){const bg=ctx.createGain();bg.gain.value=2.2;bg.connect(amb);nodes.push({stop:lullaby(ctx,bg)})}
+  if(k==="pad"){[196,246.94,293.66,392].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain(),l=ctx.createOscillator(),lg=ctx.createGain();o.type="sine";o.frequency.value=f;g.gain.value=.05;l.frequency.value=.06+i*.03;lg.gain.value=.025;l.connect(lg).connect(g.gain);o.connect(g).connect(amb);o.start();l.start();nodes.push(o,l)})}
+  if(k==="noise"||k==="heart"){const s=ctx.createBufferSource();s.buffer=brown();s.loop=true;const f=ctx.createBiquadFilter();f.type="lowpass";f.frequency.value=k==="heart"?180:700;const g=ctx.createGain();g.gain.value=k==="heart"?.5:.9;s.connect(f).connect(g).connect(amb);s.start();nodes.push(s)}
+  if(k==="heart"){const beat=()=>{if(!run)return;const t=ctx.currentTime;[0,.28].forEach((d,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=i?48:58;g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(i?.35:.6,t+d+.04);g.gain.exponentialRampToValueAtTime(.001,t+d+.3);o.connect(g).connect(amb);o.start(t+d);o.stop(t+d+.4)});timers.push(setTimeout(beat,1050))};beat()}
+  if(mode==="wake"){const sc=[523.25,587.33,659.25,783.99,880];const chime=()=>{if(!run)return;const t=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=sc[Math.floor(Math.random()*5)];g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.12,t+.05);g.gain.exponentialRampToValueAtTime(.001,t+2.5);o.connect(g).connect(amb);o.start(t);o.stop(t+2.6);timers.push(setTimeout(chime,4000+Math.random()*6000))};chime()}
+}
+async function voiceLoop(gap){
+  while(run){
+    let any=false;
+    for(const l of lines){
+      if(!run)break;const b=await get("v"+l.id);if(!b)continue;any=true;
+      await new Promise(res=>{const a=new Audio(URL.createObjectURL(b));try{const s=ctx.createMediaElementSource(a);s.connect(voi)}catch(e){}a.onended=a.onerror=res;timers.push(setTimeout(res,120000));a.play().catch(res)});
+      await wait(gap*1000)}
+    if(!any)await wait(3000)}
+}
+function stopAll(msg){
+  try{wl&&wl.release()}catch(e){}wl=null;
+  run=false;timers.forEach(clearTimeout);timers=[];nodes.forEach(n=>{try{n.stop()}catch(e){}});nodes=[];
+  if(ctx){try{ctx.close()}catch(e){}ctx=null}
+  $("#go").hidden=false;$("#stop").hidden=true;$("#st").textContent=msg||"";$("#sky").style.display="none"
+}
+$("#go").onclick=async()=>{
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC){toast("This browser can’t play the sound.");return}
+  stopMusic();ctx=new AC();await ctx.resume();run=true;
+  try{wl=await navigator.wakeLock.request("screen")}catch(e){}
+  const mode=$("#mode").value,tv=$("#vol").value/100*.9,vv=$("#vov").value/100*1.2,mins=mode==="nap"?Math.min(90,+$("#tm").value):+$("#tm").value;
+  amb=ctx.createGain();voi=ctx.createGain();amb.connect(ctx.destination);voi.connect(ctx.destination);
+  const t=ctx.currentTime;
+  if(mode==="wake"){amb.gain.setValueAtTime(.001,t);amb.gain.linearRampToValueAtTime(tv,t+300);voi.gain.setValueAtTime(.001,t);voi.gain.linearRampToValueAtTime(vv,t+300)}
+  else{amb.gain.setValueAtTime(.001,t);amb.gain.linearRampToValueAtTime(tv,t+15);voi.gain.setValueAtTime(.001,t);voi.gain.linearRampToValueAtTime(vv,t+15)}
+  startSound($("#snd").value,mode);
+  timers.push(setTimeout(()=>voiceLoop(+$("#gap").value),mode==="wake"?20000:3000));
+  const total=mode==="wake"?Math.min(mins,30):mins;
+  timers.push(setTimeout(()=>{const n=ctx.currentTime;amb.gain.cancelScheduledValues(n);voi.gain.cancelScheduledValues(n);amb.gain.setValueAtTime(amb.gain.value,n);voi.gain.setValueAtTime(voi.gain.value,n);amb.gain.linearRampToValueAtTime(.0001,n+25);voi.gain.linearRampToValueAtTime(.0001,n+25);timers.push(setTimeout(()=>stopAll("Finished. Sweet dreams."),26000))},total*60000-25000));
+  $("#go").hidden=true;$("#stop").hidden=false;$("#st").textContent=mode==="wake"?"Waking gently: the sound rises slowly.":"Playing softly. Fades out on its own.";
+  if($("#vis").checked)openSky();
+};
+$("#stop").onclick=()=>stopAll("Stopped.");
+document.addEventListener("visibilitychange",async()=>{if(run&&document.visibilityState==="visible"){try{if(ctx&&ctx.state!=="running")await ctx.resume()}catch(e){}try{wl=await navigator.wakeLock.request("screen")}catch(e){}}});
+$("#sky-open").onclick=openSky;
+
+// ---------- wallpapers ----------
+let raf=0,liveScene=null;
+const SKY={stars:["#0b1636","#1f3a6e"],sunny:["#bfe3fb","#eaf6ff"],partly:["#b4d9f3","#e3f1fb"],cloudy:["#aebfce","#d3dde6"],rain:["#8fa4b8","#b9c7d4"],storm:["#6f8196","#9aaab9"],snow:["#d6e4ee","#f1f6fa"],fog:["#cfd9e0","#e8edf0"],wind:["#a9d0ee","#dbeefa"]};
+async function liveWeather(){
+  try{
+    const p=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:4000}));
+    const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude="+p.coords.latitude+"&longitude="+p.coords.longitude+"&current=weather_code,is_day,wind_speed_10m");
+    const c=(await r.json()).current,k=c.weather_code;
+    if(k>=95)return"storm";if((k>=71&&k<=77)||k===85||k===86)return"snow";if((k>=51&&k<=67)||(k>=80&&k<=82))return"rain";if(k===45||k===48)return"fog";
+    if(c.wind_speed_10m>35)return"wind";if(k===3)return"cloudy";
+    if(!c.is_day)return"stars";return k>=1?"partly":"sunny"
+  }catch(e){return null}
+}
+async function openSky(){
+  const w=$("#sky"),c=w.querySelector("canvas");w.style.display="block";
+  let sc=$("#wp").value;
+  if(sc==="auto"){sc=liveScene||(liveScene=await liveWeather());if(!sc){sc="partly";toast("Live weather can’t load in this preview, so this shows partly cloudy. Pick the weather yourself in the list.")}}
+  c.width=innerWidth;c.height=innerHeight;const g=c.getContext("2d"),W=c.width,H=c.height,dim=+$("#dim").value,[a,b]=SKY[sc];
+  const parts=Array.from({length:sc==="rain"||sc==="storm"?110:sc==="snow"?80:sc==="stars"?70:0},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.6+.6,p:Math.random()*6.28,s:.4+Math.random()*.8}));
+  const nc={sunny:0,stars:0,partly:4,cloudy:7,rain:6,storm:7,snow:5,fog:9,wind:6}[sc];
+  const cl=Array.from({length:nc},()=>({x:Math.random()*W,y:H*(.1+.55*Math.random()),s:.7+Math.random()*.9,v:(sc==="wind"?.5:.12)*(.5+Math.random())}));
+  const tone=sc==="stars"?"220,228,255":(sc==="storm"||sc==="rain")?"150,166,184":sc==="cloudy"?"235,240,245":"255,255,255";
+  cancelAnimationFrame(raf);
+  (function f(t){
+    const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,a);gr.addColorStop(1,b);g.fillStyle=gr;g.fillRect(0,0,W,H);
+    if(sc==="sunny"||sc==="partly"||sc==="wind"){const sx=W*.78,sy=H*.2,sg=g.createRadialGradient(sx,sy,6,sx,sy,130);sg.addColorStop(0,"rgba(255,236,170,.85)");sg.addColorStop(1,"rgba(255,236,170,0)");g.fillStyle=sg;g.beginPath();g.arc(sx,sy,130,0,6.28);g.fill()}
+    if(sc==="stars"){const mx=W*.75,my=H*.22,mg=g.createRadialGradient(mx,my,4,mx,my,90);mg.addColorStop(0,"rgba(243,217,164,.3)");mg.addColorStop(1,"rgba(243,217,164,0)");g.fillStyle=mg;g.beginPath();g.arc(mx,my,90,0,6.28);g.fill();g.fillStyle="rgba(243,217,164,.55)";g.beginPath();g.arc(mx,my,16,0,6.28);g.fill()}
+    cl.forEach(q=>{q.x+=q.v;if(q.x>W+160)q.x=-160;g.fillStyle="rgba("+tone+",.75)";[[0,0,70],[55,-12,55],[-55,-8,50],[100,6,42],[-100,8,40]].forEach(o=>{g.beginPath();g.ellipse(q.x+o[0]*q.s,q.y+o[1]*q.s,o[2]*q.s,o[2]*.62*q.s,0,0,6.28);g.fill()})});
+    parts.forEach(s=>{
+      if(sc==="stars"){s.y-=s.s*.05;if(s.y<0)s.y=H;g.fillStyle="rgba(210,220,255,"+(.25+.2*Math.sin(t/3000+s.p))+")";g.beginPath();g.arc(s.x,s.y,s.r,0,6.28);g.fill()}
+      else if(sc==="snow"){s.y+=s.s*.6;s.x+=Math.sin(t/2000+s.p)*.3;if(s.y>H){s.y=-4;s.x=Math.random()*W}g.fillStyle="rgba(255,255,255,.85)";g.beginPath();g.arc(s.x,s.y,s.r+.6,0,6.28);g.fill()}
+      else{s.y+=s.s*5;s.x-=.8;if(s.y>H){s.y=-10;s.x=Math.random()*W}g.strokeStyle="rgba(235,245,255,.45)";g.beginPath();g.moveTo(s.x,s.y);g.lineTo(s.x-1.5,s.y+12);g.stroke()}});
+    if(sc==="fog"){g.fillStyle="rgba(255,255,255,"+(.18+.08*Math.sin(t/4000))+")";g.fillRect(0,0,W,H)}
+    if(sc==="storm"){g.fillStyle="rgba(255,255,255,"+(Math.max(0,Math.sin(t/5200))**8*.1)+")";g.fillRect(0,0,W,H)}
+    if(dim){g.fillStyle="rgba(0,10,30,"+dim+")";g.fillRect(0,0,W,H)}
+    if(w.style.display!=="none")raf=requestAnimationFrame(f)})(0)
+}
+$("#sky").onclick=()=>{$("#sky").style.display="none";cancelAnimationFrame(raf)};
+
+(async()=>{await openDB();try{born=!!(await get("born"))}catch(e){}
+  try{toured=!!(await get("toured"))}catch(e){}
+  try{const st=await get("settings");if(st)applySettings(st);}catch(e){}
+  try{lines=await get("lines")||[]}catch(e){lines=[]}
+  for(const l of lines){has[l.id]=!!(await get("v"+l.id))}
+  render()})();
+// ---------- Pip the stork: a talking guided tour ----------
+let tourI=0,speakOn=true,spotEl=null;
+const recCount=()=>lines.filter(l=>has[l.id]).length;
+const selText=id=>{const s=$(id);return s.options[s.selectedIndex].text};
+const OWNER_NAME="Carter";
+function pipGreet(after){
+  const gift="from Jimmy and Nevaeh’s mom, Tara — they’re friends of mine, and their message for you is: if you ever need anything at all, you just call on them.";
+  if(OWNER_NAME==="Carter"){
+    if(after) return "I’m Pip 🪶 — I’m the stork who delivered Carter, and this is his crib player: the phone or tablet that sits by his crib and sings to him all night. Everything Nevaeh and Grayson set up on their own phones — the words they picked, their recorded voices, the sounds they chose — gets sent here, to me. Let me show you how to load what they send and how to press play.";
+    return "I’m Pip 🪶 — I’m the stork who will be delivering Carter, and this is his crib player: the phone or tablet that will sit by his crib and sing to him all night. Everything Nevaeh and Grayson set up on their own phones — the words they picked, their recorded voices, the sounds they chose — gets sent here, to me. Let me show you how to load what they send and how to press play.";
+  }
+  if(OWNER_NAME){
+    const other=OWNER_NAME==="Nevaeh"?"Grayson":"Nevaeh", op=OWNER_NAME==="Nevaeh"?"his":"her";
+    if(after) return "I’m Pip 🪶 — I’m the stork who delivered Carter, and what a flight it was! He’s here, he’s perfect, and I couldn’t be prouder of all three of you. This is your very own copy of the app, "+OWNER_NAME+" — "+other+" has a copy on "+op+" phone too, with the same me in it. This lullaby is a gift for your family "+gift+" Now let me walk you through setting it up for his nights at home. I talk out loud, so turn your volume up a little. Tap Next, proud parents.";
+    return "I’m Pip 🪶 — I’m the stork who will be delivering Carter. He’s not here just yet, so I came early — to meet you, "+OWNER_NAME+", and get his lullaby ready before my big flight. This is your very own copy of the app — "+other+" has a copy on "+op+" phone too, with the same me in it. This is a gift for the three of you "+gift+" Now — I talk out loud, so turn your volume up a little. Tap Next and let’s set everything up together.";
+  }
+  if(after) return "I’m Pip 🪶 — I’m the stork who delivered Carter, and what a flight it was! He’s here, he’s perfect, and I couldn’t be prouder of all three of you. This lullaby is a gift for your family "+gift+" Now let me walk you through setting it up for his nights at home. I talk out loud, so turn your volume up a little. Tap Next, proud parents.";
+  return "I’m Pip 🪶 — I’m the stork who will be delivering Carter. He’s not here just yet, so I came early — to meet you, Nevaeh and Grayson, and get his lullaby ready before my big flight. This is a gift for the three of you "+gift+" Now — I talk out loud, so turn your volume up a little. Tap Next and let’s set everything up together.";
+}
+const PRE_STEPS=[
+{t:"Hi! I’m Pip 🪶",x:()=>pipGreet(false),tab:"lines",stat:()=>"And when the big day comes, come back to this first step and tap the “Carter’s here!” button below — I’ll switch to celebrating, and I’ll have new things to show you for his first nights home."},
+{t:"Two places to know",x:"Up top there are two tabs. “Your voices” is where you pick the words and record them in your own voices. “Play” is where you choose the sounds and start the music. Words first, then music — that’s the whole app.",tab:"lines",target:()=>document.querySelector("nav")},
+{t:"First · Pick Carter’s words",x:"This is the library — kind words grouped by theme: love, strength, kindness, wonder, blessings, family. Tap any line to add it to your list up top. Pick as many as you like; Carter will hear them softly, one at a time, all night long.",tab:"lines",target:()=>$("#lib"),stat:()=>lines.length?("You’ve picked "+lines.length+" line"+(lines.length>1?"s":"")+" so far. Lovely."):"None picked yet — go ahead and tap one below, then tap Next."},
+{t:"Make it personal",x:"Want words the library doesn’t have? Type anything in this box — a family saying, a prayer, “This is Grandma, I love you” — and tap Add line. Lines from Mommy, Daddy, and the grandparents hit different. Anybody in the family can add a line here — the more loved voices Carter hears, the better. Add a few from everybody.",tab:"lines",target:()=>$("#custom").closest(".card")},
+{t:"Second · Record your voices",x:"Now the magic part. On any of your lines, tap Record. If the phone asks about the microphone, tap Allow. Read the line slowly and softly, like you’re already hushing him to sleep, then tap Stop. Tap Listen to check it. A quiet room works best, phone about a foot from your mouth — and smile while you read. Babies can hear a smile. And doing this now, before he arrives, means his very first night home is already ready.",tab:"lines",target:()=>$("#mine"),stat:()=>lines.length?("Recorded so far: "+recCount()+" of "+lines.length+" lines."):"Tip: add a line or two first (a few steps back), then come back and record them."},
+{t:"Send your voices 💌",x:"Now the trick that lets Carter hear BOTH of you all night: you each record on your own phone, then send your voices to each other. See the card I’m highlighting — “Voices from both of you.” Tap “Send my voices” and share the little file it makes to the other phone — text it, AirDrop it, anything. On whichever phone will play by his crib, tap “Add voices I received” and pick that file, just once. From then on, that one phone holds Mommy’s voice and Daddy’s voice together. The sounds and settings you picked travel in the same file — and there’s a copy of me living on Carter’s crib player, so send it there too and everything loads at once, exactly the way you set it up.",tab:"lines",target:()=>$("#share")},
+{t:"Third · The Play room",x:"Everything that makes sound lives here on the Play tab. Don’t worry — I’ll explain each knob one at a time, with the settings most families start with.",tab:"play",target:()=>$("#play .card")},
+{t:"Mode & background sound",x:"Mode first: Night is the full steady sleep session. Nap is the same idea, shorter. Wake-up starts near-silent and slowly brightens with gentle chimes to ease him awake. Background sound sits under the voices: soft lullaby tones, a music box, rain-like hush — or Heartbeat, which sounds like the womb and is wonderful for newborns. A good first night: Night mode with Music box or Soft tones.",tab:"play",target:()=>$("#mode")},
+{t:"Volumes, pauses & the timer",x:"Two volumes — one for the background sound, one for your voices — and they stop at a safe level on purpose; this app will not blast him. Pause between lines sets how often a voice floats by; 20 seconds is a sweet spot. “Stop after” is the session length: All night means eight hours, fading out gently on its own near the end.",tab:"play",target:()=>$("#vol")},
+{t:"Wallpaper & brightness",x:"The wallpaper is the picture that fills the screen while it plays — stars, rain, snow, even the real weather outside once the app is living at its own web address. Set brightness to Dimmer or Dimmest for night. Tick “Show the wallpaper while playing” and Carter gets a calm, dim sky to drift off to.",tab:"play",target:()=>$("#wp")},
+{t:"Pressing Start",x:"When you tap Start, the sound fades in slowly — never a jolt — and your recorded lines begin after a few seconds. The screen stays awake on its own while it plays, so plug the phone in for the night. Tap Stop any time. That’s really all there is to a night with it.",tab:"play",target:()=>$("#go")},
+{t:"Put it on the Home Screen",x:"So it opens like a real app: on an iPhone, tap the Share button and choose “Add to Home Screen.” On Android, tap the ⋮ menu and choose “Add to Home screen.” Carter’s Lullaby gets its own moon icon, opens full-screen, and Grandma-proofing is complete — one tap and she’s in.",tab:"play"},
+{t:"Two gentle safety notes",x:"One: keep the phone or speaker across the room, never in the crib — the soft volume is made to travel a little way. Two: this music is a comfort, not a guard — Carter still sleeps safest on his back, in a bare crib, like the pediatricians say. Soft sounds, safe sleep. You’ve got this.",tab:"play"},
+{t:"You’re all set 🎉",x:()=>"Here’s your setup: "+lines.length+" line"+(lines.length===1?"":"s")+" picked, "+recCount()+" recorded in your voices, "+selText("#mode")+" with "+selText("#snd").toLowerCase()+", set to play for "+selText("#tm").toLowerCase()+". Any time you want me again, tap Pip’s tour at the bottom left. Sweet dreams, Carter — and congratulations, Mommy and Daddy. — Pip",tab:"play"}
+];
+const POST_STEPS=[
+{t:"Hi! I’m Pip 🪶",x:()=>pipGreet(true),tab:"lines"},
+{t:"A hello for Carter 💛",x:"Now, before we do anything else — this part isn’t for you two. Turn the phone toward that beautiful baby, and let me say this to him properly. … Hello, Carter. Hello, little man. I’m Pip — I’m the stork who brought you, and I flew a very long way just to meet you. Your Mommy and Daddy have waited so long for you, and now here you are — and you are so, so loved. Here’s my promise, little one: every night, I’ll be right here by your crib while the music plays, and you’ll fall asleep hearing how loved you are. Welcome to the world, sweet boy.",tab:"lines"},
+{t:"Now that Carter’s here 🌙",x:"Your first nights home, keep it simple: feed, swaddle, lights low — then press Start and let the lullaby carry him the rest of the way. For the first few weeks the Heartbeat sound is pure gold, because it sounds like Mommy from the inside. Put the phone across the room and plugged in, volume low. And if a night goes sideways, that’s normal — the music will be right here tomorrow night too.",tab:"play"},
+{t:"Two places to know",x:"Up top there are two tabs. “Your voices” is where you pick the words and record them in your own voices. “Play” is where you choose the sounds and start the music. Words first, then music — that’s the whole app.",tab:"lines",target:()=>document.querySelector("nav")},
+{t:"First · Pick Carter’s words",x:"This is the library — kind words grouped by theme: love, strength, kindness, wonder, blessings, family. Tap any line to add it to your list up top. Pick as many as you like; Carter will hear them softly, one at a time, all night long.",tab:"lines",target:()=>$("#lib"),stat:()=>lines.length?("You’ve picked "+lines.length+" line"+(lines.length>1?"s":"")+" so far. Lovely."):"None picked yet — go ahead and tap one below, then tap Next."},
+{t:"Make it personal",x:"Want words the library doesn’t have? Type anything in this box — a family saying, a prayer, “This is Grandma, I love you” — and tap Add line. Lines from Mommy, Daddy, and the grandparents hit different. Anybody in the family can add a line here — the more loved voices Carter hears, the better. Add a few from everybody.",tab:"lines",target:()=>$("#custom").closest(".card")},
+{t:"Second · Record your voices",x:"Now the magic part. On any of your lines, tap Record. If the phone asks about the microphone, tap Allow. Read the line slowly and softly, like you’re already hushing him to sleep, then tap Stop. Tap Listen to check it. A quiet room works best, phone about a foot from your mouth — and smile while you read. Babies can hear a smile. Record a couple in your tired-parent voices too; those are the ones he knows best now.",tab:"lines",target:()=>$("#mine"),stat:()=>lines.length?("Recorded so far: "+recCount()+" of "+lines.length+" lines."):"Tip: add a line or two first (back a few steps), then come back and record them."},
+{t:"Send your voices 💌",x:"Now the trick that lets Carter hear BOTH of you tonight: you each record on your own phone, then send your voices to each other. See the card I’m highlighting — “Voices from both of you.” Tap “Send my voices” and share the little file it makes to the other phone — text it, AirDrop it, anything. On whichever phone will play by his crib, tap “Add voices I received” and pick that file, just once. From then on, that one phone holds Mommy’s voice and Daddy’s voice together. The sounds and settings you picked travel in the same file — and there’s a copy of me living on Carter’s crib player, so send it there too and everything loads at once, exactly the way you set it up.",tab:"lines",target:()=>$("#share")},
+{t:"Third · The Play room",x:"Everything that makes sound lives here on the Play tab. Don’t worry — I’ll explain each knob one at a time, with the settings most families start with.",tab:"play",target:()=>$("#play .card")},
+{t:"Mode & background sound",x:"Mode first: Night is the full steady sleep session. Nap is the same idea, shorter. Wake-up starts near-silent and slowly brightens with gentle chimes to ease him awake. Background sound sits under the voices: soft lullaby tones, a music box, rain-like hush — or Heartbeat, which sounds like the womb and is wonderful for newborns. A good first night: Night mode with Music box or Soft tones.",tab:"play",target:()=>$("#mode")},
+{t:"Volumes, pauses & the timer",x:"Two volumes — one for the background sound, one for your voices — and they stop at a safe level on purpose; this app will not blast him. Pause between lines sets how often a voice floats by; 20 seconds is a sweet spot. “Stop after” is the session length: All night means eight hours, fading out gently on its own near the end.",tab:"play",target:()=>$("#vol")},
+{t:"Wallpaper & brightness",x:"The wallpaper is the picture that fills the screen while it plays — stars, rain, snow, even the real weather outside once the app is living at its own web address. Set brightness to Dimmer or Dimmest for night. Tick “Show the wallpaper while playing” and Carter gets a calm, dim sky to drift off to.",tab:"play",target:()=>$("#wp")},
+{t:"Pressing Start",x:"When you tap Start, the sound fades in slowly — never a jolt — and your recorded lines begin after a few seconds. The screen stays awake on its own while it plays, so plug the phone in for the night. Tap Stop any time. That’s really all there is to a night with it.",tab:"play",target:()=>$("#go")},
+{t:"Put it on the Home Screen",x:"So it opens like a real app: on an iPhone, tap the Share button and choose “Add to Home Screen.” On Android, tap the ⋮ menu and choose “Add to Home screen.” Carter’s Lullaby gets its own moon icon, opens full-screen, and Grandma-proofing is complete — one tap and she’s in.",tab:"play"},
+{t:"Two gentle safety notes",x:"One: keep the phone or speaker across the room, never in the crib — the soft volume is made to travel a little way. Two: this music is a comfort, not a guard — Carter still sleeps safest on his back, in a bare crib, like the pediatricians say. Soft sounds, safe sleep. You’ve got this.",tab:"play"},
+{t:"You’re all set 🎉",x:()=>"Here’s your setup: "+lines.length+" line"+(lines.length===1?"":"s")+" picked, "+recCount()+" recorded in your voices, "+selText("#mode")+" with "+selText("#snd").toLowerCase()+", set to play for "+selText("#tm").toLowerCase()+". Any time you want me again, tap Pip’s tour at the bottom left. Welcome home, Carter. Sweet dreams, little man. — Pip",tab:"play"}
+];
+let born=false;
+let toured=false;
+let STEPS=PRE_STEPS;
+function buildSteps(){STEPS=born?POST_STEPS.slice():PRE_STEPS.slice();
+  if(OWNER_NAME==="Carter") STEPS.splice(born?2:1,0,{t:"Load what they sent 📥",x:"On the Your voices tab there’s a card called “Voices from both of you.” When Nevaeh or Grayson sends a voices file from their phone, tap “Add voices I received” on THIS device and pick that file, just once. It loads everything at once — their lines, their recordings, even the sounds and timer they chose — so this crib player becomes exactly what they set up. Then all that’s left is the Play tab and Start.",tab:"lines",target:()=>$("#share")});}
+function pipSay(text){
+  const T=$("#tour");T.classList.remove("talking");
+  if(!speakOn||!("speechSynthesis" in window))return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"").replace(/·/g,","));
+    u.rate=.98;u.pitch=1.12;
+    const vs=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().startsWith("en"));
+    const soft=vs.find(v=>/female|samantha|zira|aria|jenny|google us english/i.test(v.name))||vs[0];
+    if(soft)u.voice=soft;
+    u.onstart=()=>T.classList.add("talking");u.onend=u.onerror=()=>T.classList.remove("talking");
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function setSpot(el){
+  if(spotEl){spotEl.classList.remove("spot");spotEl=null}
+  if(el){spotEl=el;el.classList.add("spot");setTimeout(()=>{try{el.scrollIntoView({behavior:"smooth",block:"center"})}catch(e){}},80)}
+}
+function renderStep(){
+  const s=STEPS[tourI],T=$("#tour");
+  $("#tt").textContent=s.t;
+  const txt=typeof s.x==="function"?s.x():s.x;$("#tx").textContent=txt;
+  $("#tstat").textContent=s.stat?s.stat():"";
+  $("#tstep").textContent="Step "+(tourI+1)+" of "+STEPS.length;
+  $("#tdots").innerHTML=STEPS.map((_,i)=>"<i class='"+(i<=tourI?"on":"")+"'></i>").join("");
+  $("#tback").style.visibility=tourI===0?"hidden":"visible";
+  const br=$("#tbornrow"),showBorn=(tourI===0&&!born);br.hidden=!showBorn;br.style.display=showBorn?"flex":"none";
+  $("#tnext").textContent=tourI===STEPS.length-1?"Start playing ▶":"Next →";
+  if(s.tab)show(s.tab,false);
+  setSpot(null);
+  if(s.target)setTimeout(()=>setSpot(s.target()),120);
+  T.classList.remove("wave");void T.offsetWidth;T.classList.add("wave");
+  pipSay((typeof s.x==="function"?txt:txt));
+}
+function openTour(){
+  buildSteps();$("#tour").hidden=false;tourI=0;renderStep();
+}
+function closeTour(){
+  $("#tour").hidden=true;setSpot(null);toured=true;put("toured",1);
+  try{speechSynthesis.cancel()}catch(e){}
+  $("#tour").classList.remove("talking");
+}
+$("#tborn").onclick=async()=>{born=true;await put("born",1);buildSteps();tourI=0;renderStep();toast("Congratulations!! 🎉 Carter is here!")};
+$("#guide").onclick=openTour;
+// ---------- share voices between the two phones ----------
+function blobToDataURL(b){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(b)})}
+const SETTING_IDS=["mode","snd","vol","vov","gap","tm","wp","dim","vis"];
+function applySettings(s){if(!s||typeof s!=="object")return;SETTING_IDS.forEach(id=>{const el=document.getElementById(id);if(!el||s[id]===undefined)return;if(el.type==="checkbox")el.checked=!!s[id];else el.value=s[id];try{el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}))}catch(e){}})}
+$("#exp").onclick=async()=>{
+  const items=[];
+  for(const l of lines){
+    let audio=null; try{const rec=await get("v"+l.id); if(rec) audio=await blobToDataURL(rec);}catch(e){}
+    items.push({text:l.text,audio});
+  }
+  const gv=id=>{const el=document.getElementById(id);return el?(el.type==="checkbox"?el.checked:el.value):undefined};
+  const settings={};SETTING_IDS.forEach(id=>{const v=gv(id);if(v!==undefined)settings[id]=v});
+  const payload={app:"carters-lullaby",kind:"voices",from:OWNER_NAME||"",v:2,settings,items};
+  const name="carters-voices"+(OWNER_NAME?"-"+OWNER_NAME.toLowerCase():"")+".json";
+  const file=new File([JSON.stringify(payload)],name,{type:"application/json"});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});toast("Voices sent 💌");return}catch(e){if(e&&e.name==="AbortError")return}}
+  const a=document.createElement("a");a.href=URL.createObjectURL(file);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast("Your voices file is ready 💌 Send it to the other phone");
+};
+$("#imp").onclick=()=>$("#impf").click();
+$("#impf").onchange=async ev=>{
+  const f=ev.target.files[0]; ev.target.value=""; if(!f)return;
+  try{
+    const data=JSON.parse(await f.text());
+    if(!data||data.kind!=="voices"||!Array.isArray(data.items)) throw new Error("bad file");
+    let addedLines=0,addedVoices=0;
+    for(const it of data.items){
+      if(!it||typeof it.text!=="string"||!it.text.trim()) continue;
+      let line=lines.find(l=>l.text===it.text);
+      if(!line){line={id:Date.now()+""+Math.floor(Math.random()*999),text:it.text};lines.push(line);addedLines++;}
+      if(it.audio){try{const blob=await (await fetch(it.audio)).blob(); await put("v"+line.id,blob); has[line.id]=true; addedVoices++;}catch(e){}}
+    }
+    let hadSettings=false;
+    if(data.settings&&typeof data.settings==="object"){
+      hadSettings=true; try{await put("settings",data.settings);}catch(e){} applySettings(data.settings);
+    }
+    await put("lines",lines); render();
+    toast("Voices received 💛 "+addedVoices+" recording"+(addedVoices===1?"":"s")+" added"+(addedLines?(", "+addedLines+" new line"+(addedLines===1?"":"s")):"")+(hadSettings?", and their setup too":"")+". Now Carter hears you both.");
+  }catch(e){ toast("Hmm — that file didn’t look like a voices file."); }
+};
+$("#texit").onclick=closeTour;
+$("#tback").onclick=()=>{if(tourI>0){tourI--;renderStep()}};
+$("#tnext").onclick=()=>{
+  if(tourI===STEPS.length-1){closeTour();show("play",true);toast("You’re set. Press Start when it’s bedtime. 🌙");return}
+  tourI++;renderStep()
+};
+$("#tspeak").onclick=e=>{
+  speakOn=!speakOn;
+  e.currentTarget.textContent=speakOn?"🔊 Voice on":"🔇 Voice off";
+  e.currentTarget.setAttribute("aria-pressed",speakOn);
+  if(speakOn)renderStep();else{try{speechSynthesis.cancel()}catch(x){}$("#tour").classList.remove("talking")}
+};
+if("speechSynthesis" in window){try{speechSynthesis.getVoices()}catch(e){}}
+</script>
+</body>
+</html>
