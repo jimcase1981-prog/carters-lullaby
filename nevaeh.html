@@ -70,7 +70,7 @@ input[type=range]{width:100%;accent-color:var(--moon)}
 .guidebtn{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:12px;z-index:45;padding:10px 14px;border-radius:999px;border:0;background:rgba(255,255,255,.88);color:#173452;font:600 14px Figtree,sans-serif;cursor:pointer}
 #tour{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none}
 #tour[hidden]{display:none}
-.tcard{pointer-events:auto;width:100%;max-width:680px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 12px 40px rgba(10,25,60,.35)}
+.tcard{pointer-events:auto;width:100%;max-width:680px;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 12px 40px rgba(10,25,60,.35)}
 .trow{display:flex;gap:12px;align-items:flex-start}
 .pipwrap{flex:none;width:74px;height:74px}
 .pipwrap svg{width:74px;height:74px}
@@ -511,6 +511,7 @@ function setSpot(el){
 }
 function renderStep(){
   const s=STEPS[tourI],T=$("#tour");
+  const card=$(".tcard");if(card)card.scrollTop=0;
   $("#tt").textContent=s.t;
   const txt=typeof s.x==="function"?s.x():s.x;$("#tx").textContent=txt;
   $("#tstat").textContent=s.stat?s.stat():"";
