@@ -240,7 +240,7 @@ addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#sky").style.display==="b
 $("#vol").oninput=e=>$("#vv").textContent=e.target.value+"%";
 $("#vov").oninput=e=>$("#vo").textContent=e.target.value+"%";
 let mctx=null,mg=null,mstop=null,musicOn=true,graf=0;
-const openApp=()=>{const g=$('#greet');if(g.style.display==='none')return;g.style.display='none';cancelAnimationFrame(graf);if(!toured){setTimeout(()=>{try{openTour()}catch(e){}},650)}else if(!lines.length)setTimeout(()=>toast("New here? Tap Pip’s tour at the bottom left — Pip the stork will set everything up with you, step by step."),700);try{if(OWNER_NAME==="Carter")show("play")}catch(e){}};
+const openApp=()=>{const g=$('#greet');if(g.style.display==='none')return;g.style.display='none';cancelAnimationFrame(graf);try{startMusic()}catch(e){}if(!toured){setTimeout(()=>{try{openTour()}catch(e){}},650)}else if(!lines.length)setTimeout(()=>toast("New here? Tap Pip’s tour at the bottom left — Pip the stork will set everything up with you, step by step."),700);try{if(OWNER_NAME==="Carter")show("play")}catch(e){}};
 $('#enter').addEventListener('pointerdown',e=>{e.preventDefault();openApp()});
 $('#enter').onclick=openApp;
 // ---------- lullaby music box ----------
@@ -265,7 +265,7 @@ function stopMusic(){
   if(mg){const g=mg,c=mctx;try{g.gain.cancelScheduledValues(c.currentTime);g.gain.setValueAtTime(g.gain.value,c.currentTime);g.gain.linearRampToValueAtTime(.0001,c.currentTime+1.2)}catch(e){}setTimeout(()=>{try{g.disconnect()}catch(e){}},1500);mg=null}
 }
 document.addEventListener('pointerdown',()=>{if(musicOn&&!mstop&&!run)startMusic()});
-$('#mus').onclick=()=>{musicOn=!musicOn;$('#mus').textContent=musicOn?'♪ Music on':'♪ Music off';$('#mus').setAttribute('aria-pressed',musicOn);musicOn?startMusic():stopMusic()};
+$('#mus').onclick=()=>{musicOn=!musicOn;$('#mus').textContent=musicOn?'♪ Music on':'♪ Music off';$('#mus').setAttribute('aria-pressed',musicOn);put("music",musicOn?1:0);musicOn?startMusic():stopMusic()};
 // ---------- welcome night sky with the stork ----------
 function wing(g,fl,a,col){
   g.save();g.globalAlpha=a;const up=-45*fl+8;
@@ -362,7 +362,7 @@ $("#go").onclick=async()=>{
   $("#go").hidden=true;$("#stop").hidden=false;$("#st").textContent=mode==="wake"?"Waking gently: the sound rises slowly.":"Playing softly. Fades out on its own.";
   if($("#vis").checked)openSky();
 };
-$("#stop").onclick=()=>stopAll("Stopped.");
+$("#stop").onclick=()=>{stopAll("Stopped.");if(musicOn)setTimeout(()=>{try{startMusic()}catch(e){}},1400)};
 document.addEventListener("visibilitychange",async()=>{if(run&&document.visibilityState==="visible"){try{if(ctx&&ctx.state!=="running")await ctx.resume()}catch(e){}try{wl=await navigator.wakeLock.request("screen")}catch(e){}}});
 $("#sky-open").onclick=openSky;
 
@@ -407,6 +407,7 @@ $("#sky").onclick=()=>{$("#sky").style.display="none";cancelAnimationFrame(raf)}
 
 (async()=>{await openDB();try{born=!!(await get("born"))}catch(e){}
   try{toured=!!(await get("toured"))}catch(e){}
+  try{const mv=await get("music");if(mv!==null&&mv!==undefined){musicOn=!!mv;const mb=$("#mus");if(mb){mb.textContent=musicOn?"♪ Music on":"♪ Music off";mb.setAttribute("aria-pressed",musicOn)}}}catch(e){}
   try{speakOn=!!(await get("voice"));const sb=$("#tspeak");if(sb){sb.textContent=speakOn?"🔊 Voice on":"🔇 Hear Pip";sb.setAttribute("aria-pressed",speakOn)}}catch(e){}
   try{const st=await get("settings");if(st)applySettings(st);}catch(e){}
   try{lines=await get("lines")||[]}catch(e){lines=[]}
@@ -425,11 +426,11 @@ function pipGreet(after){
   }
   if(OWNER_NAME){
     const other=OWNER_NAME==="Nevaeh"?"Grayson":"Nevaeh", op=OWNER_NAME==="Nevaeh"?"his":"her";
-    if(after) return "I’m Pip 🪶 — I’m the stork who delivered Carter, and what a flight it was! He’s here, he’s perfect, and I couldn’t be prouder of all three of you. This is your very own copy of the app, "+OWNER_NAME+" — "+other+" has a copy on "+op+" phone too, with the same me in it. This lullaby is a gift for your family "+gift+" Now let me walk you through setting it up for his nights at home. I talk out loud, so turn your volume up a little. Tap Next, proud parents.";
-    return "I’m Pip 🪶 — I’m the stork who will be delivering Carter. He’s not here just yet, so I came early — to meet you, "+OWNER_NAME+", and get his lullaby ready before my big flight. This is your very own copy of the app — "+other+" has a copy on "+op+" phone too, with the same me in it. This is a gift for the three of you "+gift+" Now — I talk out loud, so turn your volume up a little. Tap Next and let’s set everything up together.";
+    if(after) return "I’m Pip 🪶 — I’m the stork who delivered Carter, and what a flight it was! He’s here, he’s perfect, and I couldn’t be prouder of all three of you. This is your very own copy of the app, "+OWNER_NAME+" — "+other+" has a copy on "+op+" phone too, with the same me in it. This lullaby is a gift for your family "+gift+" Now let me walk you through setting it up for his nights at home. The soft lullaby music starts all by itself — and if you’d like to hear my voice too, tap “Hear Pip” below. Tap Next, proud parents.";
+    return "I’m Pip 🪶 — I’m the stork who will be delivering Carter. He’s not here just yet, so I came early — to meet you, "+OWNER_NAME+", and get his lullaby ready before my big flight. This is your very own copy of the app — "+other+" has a copy on "+op+" phone too, with the same me in it. This is a gift for the three of you "+gift+" Now — The soft lullaby music starts all by itself — and if you’d like to hear my voice too, tap “Hear Pip” below. Tap Next and let’s set everything up together.";
   }
-  if(after) return "I’m Pip 🪶 — I’m the stork who delivered Carter, and what a flight it was! He’s here, he’s perfect, and I couldn’t be prouder of all three of you. This lullaby is a gift for your family "+gift+" Now let me walk you through setting it up for his nights at home. I talk out loud, so turn your volume up a little. Tap Next, proud parents.";
-  return "I’m Pip 🪶 — I’m the stork who will be delivering Carter. He’s not here just yet, so I came early — to meet you, Nevaeh and Grayson, and get his lullaby ready before my big flight. This is a gift for the three of you "+gift+" Now — I talk out loud, so turn your volume up a little. Tap Next and let’s set everything up together.";
+  if(after) return "I’m Pip 🪶 — I’m the stork who delivered Carter, and what a flight it was! He’s here, he’s perfect, and I couldn’t be prouder of all three of you. This lullaby is a gift for your family "+gift+" Now let me walk you through setting it up for his nights at home. The soft lullaby music starts all by itself — and if you’d like to hear my voice too, tap “Hear Pip” below. Tap Next, proud parents.";
+  return "I’m Pip 🪶 — I’m the stork who will be delivering Carter. He’s not here just yet, so I came early — to meet you, Nevaeh and Grayson, and get his lullaby ready before my big flight. This is a gift for the three of you "+gift+" Now — The soft lullaby music starts all by itself — and if you’d like to hear my voice too, tap “Hear Pip” below. Tap Next and let’s set everything up together.";
 }
 const PRE_STEPS=[
 {t:"Hi! I’m Pip 🪶",x:()=>pipGreet(false),tab:"lines",stat:()=>"And when the big day comes, come back to this first step and tap the “Carter’s here!” button below — I’ll switch to celebrating, and I’ll have new things to show you for his first nights home."},
