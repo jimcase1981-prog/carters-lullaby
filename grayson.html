@@ -194,7 +194,7 @@ const LIB={
 let db=null;const mem={};
 function openDB(){return new Promise(r=>{try{const q=indexedDB.open("cl",1);q.onupgradeneeded=()=>q.result.createObjectStore("a");q.onsuccess=()=>{db=q.result;r()};q.onerror=()=>r()}catch(e){r()}})}
 function put(k,v){mem[k]=v;return new Promise(r=>{if(!db)return r();try{const t=db.transaction("a","readwrite");t.objectStore("a").put(v,k);t.oncomplete=r;t.onerror=r}catch(e){r()}})}
-function get(k){return new Promise(r=>{if(mem[k])return r(mem[k]);if(!db)return r(null);try{const q=db.transaction("a").objectStore("a").get(k);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}catch(e){r(null)}})}
+function get(k){return new Promise(r=>{if(mem[k]!==undefined)return r(mem[k]);if(!db)return r(null);try{const q=db.transaction("a").objectStore("a").get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}})}
 function del(k){delete mem[k];return new Promise(r=>{if(!db)return r();try{const t=db.transaction("a","readwrite");t.objectStore("a").delete(k);t.oncomplete=r;t.onerror=r}catch(e){r()}})}
 let lines=[],has={},cur=null;
 const toast=m=>{const t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display="none",4500)};
